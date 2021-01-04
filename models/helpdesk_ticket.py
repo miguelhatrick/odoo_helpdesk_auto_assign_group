@@ -14,14 +14,14 @@ class HelpdeskItemCustom(models.Model):
     @api.model
     def create(self, values):
 
-        if values.get("category_id") \
-                and values.get("category_id") > 0:
+        if values.get("category_id"):
 
-            _category = self.env['helpdesk.ticket.category'].search([('id', '=', values.get("category_id"))])
+            _category = self.env['helpdesk.ticket.category'].sudo().search([('id', '=', values.get("category_id"))])
 
-            values['team_id'] = _category.team_id.id
-            if values['user_id'] is False:
-                values['user_id'] = _category.default_user_id.id
+            if _category:
+                values['team_id'] = _category.team_id.id
+                if values.get("user_id") is False or values.get("user_id") is None:
+                    values['user_id'] = _category.default_user_id.id
 
         result = super(HelpdeskItemCustom, self).create(values)
         return result
