@@ -16,7 +16,11 @@ class HelpdeskItemCustom(models.Model):
 
         if values.get("category_id"):
 
-            _category = self.env['helpdesk.ticket.category'].sudo().search([('id', '=', values.get("category_id"))])
+            _category_id = values.get("category_id")
+            if isinstance(_category_id, str):
+                _category_id = int(_category_id)
+
+            _category = self.env['helpdesk.ticket.category'].sudo().search([('id', '=', _category_id)])
 
             if _category:
                 values['team_id'] = _category.team_id.id
